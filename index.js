@@ -100,6 +100,25 @@ app.get("/playlist/:playlistId/:songId", (req, res) => {
 
 })
 
+// sort descending playlist by playcount
+app.get("/favorites/:playlistId", (req, res) => {
+  let rawdata = fs.readFileSync('data.json');
+  let data = JSON.parse(rawdata);
+
+  data[req.params.playlistId].songs.sort((a, b) => {
+    return b.playcount - a.playcount
+  })
+
+  let output = ``
+
+  for(let i = 0; i < data[req.params.playlistId].songs.length; i++) {
+    output += `${i+1}. ${data[req.params.playlistId].songs[i].title} (played ${data[req.params.playlistId].songs[i].playcount} times) \n`
+  }
+
+  res.status(200).send(output)
+
+})
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
